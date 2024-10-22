@@ -1,3 +1,12 @@
+/**
+ * App Puzzle Number Game
+ * @author Saul Medina
+ * @author Dario Rosales 
+ */
+
+/**
+ * @description Array that represents the positions on board
+ */
 let array = [1, 2, 3, 4, 5, 6, 7, 8, 0];
 
 /**
@@ -20,18 +29,7 @@ createDivs = () => {
     for(i = 0; i <= array.length -1; i++){
         let divElement = document.createElement("div");
         divElement.className = "divs";
-        if(array[i] == 0){
-            divElement.textContent = null;
-            divElement.setAttribute("id","vacio");
-            divElement.setAttribute("value",i);
-        }else{
-            divElement.textContent = array[i];
-        }
-        /*
-        divElement.addEventListener("click",()=>{
-            console.log("posicion: ", divElement.id);
-        });
-        */
+        valuesToDiv(array[i],divElement);
         container.appendChild(divElement);
     }
     document.body.appendChild(container);
@@ -57,14 +55,45 @@ getNeighbors = ()=>{
     ]
 
     indicesVecinos.filter(i => i !== null && i >= 0 && i < cells.length).forEach( i => {
-        //console.log(i)
         let celda = cells[i];
-        //console.log(celda)
         celda.style.cursor = "pointer"
         celda.addEventListener('click', () => {
             alert("Vecino "+i)
         });
     });
+}
+
+/**
+ * @description clean all div attributes and remove addEventListener event
+ * added on getNeighbors() function
+ * @returns {void}
+ */
+cleanDivs = ()=>{
+    const divs = document.querySelectorAll(".divs");
+    for (let i = 0; i < divs.length; i++) {
+        divs[i].style.cursor = '';
+        divs[i].textContent = null;
+        divs[i].removeAttribute("id");
+        divs[i].removeAttribute("value");
+        const divResp = divs[i].cloneNode(false);
+        divs[i].parentNode.replaceChild(divResp, divs[i]);
+    }
+}
+
+/**
+ * @description put all necesary attributes on div elements
+ * @param {number} num - Array position number
+ * @param {HTMLDivElement} elementDiv - Div element (board element)
+ * @returns {void} 
+ */
+valuesToDiv = (num, elementDiv)=>{
+    if(num == 0){
+        elementDiv.textContent = null;
+        elementDiv.setAttribute("id","vacio");
+        elementDiv.setAttribute("value",i);
+    }else{
+        elementDiv.textContent = num;
+    }
 }
 
 /**
@@ -74,9 +103,12 @@ getNeighbors = ()=>{
  */
 resetNumbers = ()=>{
     createNumbers();
-    let container = document.getElementById("cuadro");
-    container.remove();
-    createDivs();
+    cleanDivs();
+    const divs = document.getElementsByClassName("divs");
+    
+    for (let i = 0; i < divs.length; i++) {
+        valuesToDiv(array[i],divs[i]);
+    }
     getNeighbors();
     
 }
