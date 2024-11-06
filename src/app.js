@@ -8,6 +8,7 @@
  * @description Array that represents the positions on board
  */
 let array = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+let arrayWin = [1, 2, 3, 4, 5, 6, 7, 8, 0];
 
 /**
  * @description apply random order to array
@@ -58,7 +59,9 @@ getNeighbors = ()=>{
         let celda = cells[i];
         celda.style.cursor = "pointer"
         celda.addEventListener('click', () => {
-            alert("Vecino "+i)
+            
+            addValueToPiece(celda);
+           
         });
     });
 }
@@ -111,6 +114,62 @@ resetNumbers = ()=>{
     }
     getNeighbors();
     
+}
+
+/**
+ * @description Changes the attributes of empty piece with neighbor and remove
+ * the onclick Evenet
+ */
+addValueToPiece = (vecino) =>{
+    const aux = vecino.textContent;
+    const vacio = document.getElementById("vacio");
+
+    vecino.setAttribute("id",vacio.getAttribute("id"));
+
+    vecino.removeAttribute("style");
+    vacio.removeAttribute("id");
+
+    vecino.textContent = vacio.textContent
+    vacio.textContent = aux;
+    vacio.style.cursor = "pointer";
+
+    const divResp = vecino.cloneNode(false);
+    vecino.parentNode.replaceChild(divResp, vecino);
+    victory(vacio);
+    removeBehavior();
+}
+
+/**
+ * @description Removes the pointer and remove the onClick event
+ */
+removeBehavior = () => {
+    const allDivs = document.querySelectorAll("div");
+
+    // Filtra solo los divs que tengan el cursor como pointer
+    const pointerDivs = Array.from(allDivs).filter(div =>        
+        div.style.cursor === "pointer"
+    );
+
+    pointerDivs.forEach(div => {
+        div.removeAttribute("style");
+        const divResp = div.cloneNode(true);
+        div.parentNode.replaceChild(divResp, div);
+    });
+    getNeighbors();
+}
+
+/**
+ * @description check if the array is in order to arrayWin
+ */
+victory = (div) =>{
+    let pos = array.indexOf(Number(div.textContent)); 
+    let posVacio = array.indexOf(0); 
+    array[pos] = 0;
+    array[posVacio] = Number(div.textContent);
+    if(array.every((value, index) => value === arrayWin[index])){
+        alert("ganador!");
+    }
+    //console.log(array);
 }
 
 document.addEventListener("DOMContentLoaded", function () {
